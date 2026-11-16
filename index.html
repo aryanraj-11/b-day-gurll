@@ -91,6 +91,7 @@
             transition: transform 0.6s ease;
             z-index: 4;
             border-radius: 12px 12px 0 0;
+            pointer-events: none;
         }
 
         .envelope-wrapper.open .flap {
@@ -111,6 +112,7 @@
             border-top: 95px solid transparent;
             border-radius: 0 0 12px 12px;
             z-index: 3;
+            pointer-events: none;
         }
 
         /* Letter Inside */
@@ -132,10 +134,11 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            pointer-events: none;
         }
 
         .envelope-wrapper.open .letter-preview {
-            transform: translateY(-90px);
+            transform: translateY(-95px);
         }
 
         .letter-preview h3 {
@@ -169,6 +172,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.4);
             transition: opacity 0.3s ease;
             animation: pulse 2s infinite;
+            pointer-events: none;
         }
 
         .envelope-wrapper.open .wax-seal {
@@ -389,14 +393,14 @@
 </head>
 <body>
 
-    <!-- BACKGROUND AUDIO (Replace 'song.mp3' with your actual MP3 file name) -->
+    <!-- BACKGROUND AUDIO -->
     <audio id="bgMusic" loop>
         <source src="song.mp3" type="audio/mpeg">
     </audio>
 
     <!-- OPENING LOVE LETTER ENVELOPE -->
-    <div id="envelopeOverlay" onclick="openEnvelope()">
-        <div class="envelope-wrapper" id="envelope">
+    <div id="envelopeOverlay">
+        <div class="envelope-wrapper" id="envelope" onclick="openEnvelope()">
             <div class="flap"></div>
             <div class="letter-preview">
                 <h3>For My Aarya ❤️</h3>
@@ -426,7 +430,7 @@
             <!-- Photo Gallery -->
             <div class="gallery">
                 <div class="gallery-card">
-                    <img src="smail.jpeg" alt="Memory 1">
+                    <img src="1.jpeg" alt="Memory 1">
                     <p>Your beautiful smile ✨</p>
                 </div>
                 <div class="gallery-card">
@@ -486,16 +490,20 @@
         const musicStatus = document.getElementById('musicStatus');
         const musicIcon = document.getElementById('musicIcon');
         let isPlaying = false;
+        let isOpened = false;
 
         // Open Envelope & Auto-Start Music
         function openEnvelope() {
+            if (isOpened) return;
+            isOpened = true;
+
             const envelope = document.getElementById('envelope');
             const overlay = document.getElementById('envelopeOverlay');
             const mainContainer = document.getElementById('mainContainer');
 
             envelope.classList.add('open');
 
-            // Start playing background song on tap (bypasses browser autoplay blocks)
+            // Start playing background song on tap
             bgMusic.play().then(() => {
                 isPlaying = true;
                 musicPlayer.classList.add('playing');
@@ -505,9 +513,72 @@
                 musicStatus.innerText = 'Tap to play';
             });
 
-            // Reveal main birthday card smoothly
+            // Reveal main birthday card smoothly after the flap opens
             setTimeout(() => {
                 overlay.classList.add('hidden');
                 mainContainer.classList.add('visible');
                 for(let i = 0; i < 20; i++) {
-                    setTimeout(createHeart
+                    setTimeout(createHeart, i * 60);
+                }
+            }, 900);
+        }
+
+        // Toggle Play/Pause on Floating Music Player
+        function toggleMusic() {
+            if (isPlaying) {
+                bgMusic.pause();
+                isPlaying = false;
+                musicPlayer.classList.remove('playing');
+                musicStatus.innerText = 'Paused';
+                musicIcon.innerText = '🎵';
+            } else {
+                bgMusic.play();
+                isPlaying = true;
+                musicPlayer.classList.add('playing');
+                musicStatus.innerText = 'Playing...';
+                musicIcon.innerText = '🎶';
+            }
+        }
+
+        // Floating Hearts Background Effect
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-bg');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            heart.style.fontSize = (Math.random() * 18 + 10) + 'px';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => { heart.remove(); }, 6000);
+        }
+        setInterval(createHeart, 350);
+
+        // Dodging No Button logic
+        function moveButton() {
+            const noBtn = document.getElementById('noBtn');
+            const container = document.getElementById('btnContainer');
+            
+            const maxX = container.clientWidth - noBtn.clientWidth;
+            const maxY = 60;
+            
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY) - 10;
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+
+        // Yes Button click response
+        function sayYes() {
+            document.getElementById('yesBtn').style.display = 'none';
+            document.getElementById('noBtn').style.display = 'none';
+            document.getElementById('surpriseMessage').style.display = 'block';
+            
+            for(let i = 0; i < 35; i++) {
+                setTimeout(createHeart, i * 40);
+            }
+        }
+    </script>
+</body>
+</html>
