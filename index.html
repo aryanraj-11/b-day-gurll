@@ -72,6 +72,7 @@
             justify-content: center;
             transition: opacity 0.8s ease, visibility 0.8s ease;
             padding: 20px;
+            cursor: pointer;
         }
 
         #envelopeOverlay.hidden {
@@ -87,7 +88,6 @@
             background: #ff4b72;
             border-radius: 12px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-            cursor: pointer;
             transition: transform 0.3s ease;
         }
 
@@ -199,6 +199,7 @@
             color: #ffccd5;
             letter-spacing: 0.5px;
             animation: pulse 2s infinite;
+            pointer-events: none;
         }
 
         @keyframes pulse {
@@ -471,9 +472,9 @@
         <source src="song.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- OPENING LOVE LETTER ENVELOPE -->
-    <div id="envelopeOverlay">
-        <div class="envelope-wrapper" id="envelope" onclick="openEnvelope()">
+    <!-- OPENING LOVE LETTER ENVELOPE (Click anywhere on screen to open) -->
+    <div id="envelopeOverlay" onclick="openEnvelope()">
+        <div class="envelope-wrapper" id="envelope">
             <div class="flap"></div>
             <div class="letter-preview">
                 <h3>For My Aarya ❤️</h3>
@@ -482,7 +483,7 @@
             <div class="pocket"></div>
             <div class="wax-seal">💌</div>
         </div>
-        <p class="tap-hint">Tap the envelope to open your surprise ✨</p>
+        <p class="tap-hint">Tap anywhere to open your surprise ✨</p>
     </div>
 
     <!-- PHOTO ZOOM LIGHTBOX MODAL -->
@@ -506,7 +507,7 @@
             <h1>Happy Birthday, Aarya! 🎉</h1>
             <h2>To the love of my life, my absolute everything ❤️</h2>
 
-            <!-- Photo Gallery (Click any photo to zoom) -->
+            <!-- Photo Gallery -->
             <div class="gallery">
                 <div class="gallery-card" onclick="openLightbox(this)">
                     <div class="img-wrapper">
@@ -522,4 +523,182 @@
                 </div>
                 <div class="gallery-card" onclick="openLightbox(this)">
                     <div class="img-wrapper">
-                        <img src="3.
+                        <img src="3.jpeg" alt="Memory 3">
+                    </div>
+                    <p>I Love When You Wear Saree 👀🌹</p>
+                </div>
+                <div class="gallery-card" onclick="openLightbox(this)">
+                    <div class="img-wrapper">
+                        <img src="5.jpeg" alt="Memory 4">
+                    </div>
+                    <p>Sunshine mixed with a whole lot of pretty. ☀️💖</p>
+                </div>
+                <div class="gallery-card" onclick="openLightbox(this)">
+                    <div class="img-wrapper">
+                        <img src="6.jpeg" alt="Memory 5">
+                    </div>
+                    <p>Your smile makes me happy. 😊💖</p>
+                </div>
+            </div>
+
+            <!-- Heartfelt Message -->
+            <div class="card">
+                <p>
+                    My dearest Aarya,
+                </p>
+                <p>
+                    I still remember the magic of that day on the Satara mountain—the crisp breeze, the stunning view, and the exact moment our paths crossed. Who would have thought that a simple hill trek would bring the most precious person into my world? That day changed everything for me.
+                </p>
+                <p>
+                    Every single moment I spend with you is the best time of my life. You've brought so much warmth, laughter, and light into my days. More than anyone else, you understand the chaos inside my head; you have this incredible way of calming my overthinking and making me feel completely safe just by being there. 
+                </p>
+                <p>
+                    I love you more than words could ever capture. Thank you for being my peace, my home, and my favorite part of every single day. Wishing you the happiest birthday, my love! 🥂💖✨
+                </p>
+            </div>
+
+            <p style="font-size: 1.05rem;">Do you promise to stay mine forever and ever?</p>
+
+            <div class="btn-container" id="btnContainer">
+                <button class="btn" id="yesBtn" onclick="sayYes()">Yes, Absolutely! 🥰</button>
+                <button class="btn" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No 😜</button>
+            </div>
+
+            <div id="surpriseMessage">
+                Yayyy! Best decision ever! I love you so much, Aarya! Forever and always! 🥳💖✨
+            </div>
+        </div>
+
+        <div class="footer-note">
+            Made with endless love, just for you.
+        </div>
+    </div>
+
+    <script>
+        const bgMusic = document.getElementById('bgMusic');
+        const musicPlayer = document.getElementById('musicPlayer');
+        const musicStatus = document.getElementById('musicStatus');
+        const musicIcon = document.getElementById('musicIcon');
+        let isPlaying = false;
+        let isOpened = false;
+
+        // Open Envelope & Auto-Start Music
+        function openEnvelope() {
+            if (isOpened) return;
+            isOpened = true;
+
+            const envelope = document.getElementById('envelope');
+            const overlay = document.getElementById('envelopeOverlay');
+            const mainContainer = document.getElementById('mainContainer');
+
+            envelope.classList.add('open');
+
+            bgMusic.play().then(() => {
+                isPlaying = true;
+                musicPlayer.classList.add('playing');
+                musicStatus.innerText = 'Playing...';
+                musicIcon.innerText = '🎶';
+            }).catch(() => {
+                musicStatus.innerText = 'Tap to play';
+            });
+
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                mainContainer.classList.add('visible');
+                for(let i = 0; i < 20; i++) {
+                    setTimeout(createHeart, i * 60);
+                    setTimeout(createSparkle, i * 50);
+                }
+            }, 900);
+        }
+
+        // Photo Lightbox Zoom Functions
+        function openLightbox(card) {
+            const img = card.querySelector('img');
+            const caption = card.querySelector('p').innerText;
+            const modal = document.getElementById('lightboxModal');
+            
+            document.getElementById('lightboxImg').src = img.src;
+            document.getElementById('lightboxCaption').innerText = caption;
+            modal.classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightboxModal').classList.remove('active');
+        }
+
+        // Toggle Play/Pause on Floating Music Player
+        function toggleMusic() {
+            if (isPlaying) {
+                bgMusic.pause();
+                isPlaying = false;
+                musicPlayer.classList.remove('playing');
+                musicStatus.innerText = 'Paused';
+                musicIcon.innerText = '🎵';
+            } else {
+                bgMusic.play();
+                isPlaying = true;
+                musicPlayer.classList.add('playing');
+                musicStatus.innerText = 'Playing...';
+                musicIcon.innerText = '🎶';
+            }
+        }
+
+        // Floating Hearts Background Effect
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-bg');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            heart.style.fontSize = (Math.random() * 18 + 10) + 'px';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => { heart.remove(); }, 6000);
+        }
+        setInterval(createHeart, 400);
+
+        // Glowing Sparkle Particles Effect
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.classList.add('sparkle-particle');
+            const size = (Math.random() * 5 + 3) + 'px';
+            sparkle.style.width = size;
+            sparkle.style.height = size;
+            sparkle.style.left = Math.random() * 100 + 'vw';
+            sparkle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+            document.body.appendChild(sparkle);
+
+            setTimeout(() => { sparkle.remove(); }, 8000);
+        }
+        setInterval(createSparkle, 250);
+
+        // Dodging No Button logic
+        function moveButton() {
+            const noBtn = document.getElementById('noBtn');
+            const container = document.getElementById('btnContainer');
+            
+            const maxX = container.clientWidth - noBtn.clientWidth;
+            const maxY = 60;
+            
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY) - 10;
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+
+        // Yes Button click response
+        function sayYes() {
+            document.getElementById('yesBtn').style.display = 'none';
+            document.getElementById('noBtn').style.display = 'none';
+            document.getElementById('surpriseMessage').style.display = 'block';
+            
+            for(let i = 0; i < 35; i++) {
+                setTimeout(createHeart, i * 40);
+                setTimeout(createSparkle, i * 35);
+            }
+        }
+    </script>
+</body>
+</html>
