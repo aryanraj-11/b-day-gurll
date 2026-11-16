@@ -42,6 +42,212 @@
             100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
         }
 
+        /* --- ENVELOPE OVERLAY --- */
+        #envelopeOverlay {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, #2b0c3f 0%, #0f051d 100%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+            padding: 20px;
+        }
+
+        #envelopeOverlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            background: #ff4b72;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .envelope-wrapper:hover {
+            transform: scale(1.04);
+        }
+
+        /* Envelope Top Flap */
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 115px solid #ff7597;
+            transform-origin: top;
+            transition: transform 0.6s ease;
+            z-index: 4;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .envelope-wrapper.open .flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        /* Envelope Pocket (Front Folds) */
+        .pocket {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid #ff335f;
+            border-right: 150px solid #ff335f;
+            border-bottom: 105px solid #e6224d;
+            border-top: 95px solid transparent;
+            border-radius: 0 0 12px 12px;
+            z-index: 3;
+        }
+
+        /* Letter Inside */
+        .letter-preview {
+            position: absolute;
+            bottom: 10px;
+            left: 15px;
+            width: 270px;
+            height: 170px;
+            background: #fff0f3;
+            color: #2b0c3f;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            z-index: 2;
+            transition: transform 0.7s ease 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .envelope-wrapper.open .letter-preview {
+            transform: translateY(-90px);
+        }
+
+        .letter-preview h3 {
+            font-family: 'Sacramento', cursive;
+            font-size: 2rem;
+            color: #e6224d;
+            margin-bottom: 5px;
+        }
+
+        .letter-preview p {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        /* Heart Wax Seal */
+        .wax-seal {
+            position: absolute;
+            top: 85px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 48px;
+            height: 48px;
+            background: #b3002d;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            z-index: 5;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            transition: opacity 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .envelope-wrapper.open .wax-seal {
+            opacity: 0;
+        }
+
+        .tap-hint {
+            margin-top: 35px;
+            font-size: 1rem;
+            color: #ffccd5;
+            letter-spacing: 0.5px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
+        /* --- FLOATING MUSIC PLAYER --- */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 50;
+            background: rgba(25, 10, 40, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 101, 132, 0.4);
+            padding: 10px 18px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .music-player:hover {
+            transform: translateY(-3px);
+            border-color: #ff6584;
+        }
+
+        .music-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ff4b72, #ff6584);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .music-player.playing .music-icon {
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .music-info {
+            text-align: left;
+        }
+
+        .music-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+            display: block;
+        }
+
+        .music-status {
+            font-size: 0.7rem;
+            color: #ff9eb5;
+        }
+
+        /* --- MAIN CONTENT --- */
         .container {
             position: relative;
             z-index: 2;
@@ -54,7 +260,15 @@
             padding: 40px 25px;
             border-radius: 24px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            margin: 20px 0;
+            margin: 20px 0 70px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .container.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         h1 {
@@ -72,7 +286,6 @@
             color: #f1f1f1;
         }
 
-        /* Photo Gallery Grid */
         .gallery {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -176,8 +389,36 @@
 </head>
 <body>
 
-    <div class="container">
-        <!-- BIRTHDAY CONTENT SECTION -->
+    <!-- BACKGROUND AUDIO (Replace 'song.mp3' with your actual MP3 file name) -->
+    <audio id="bgMusic" loop>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- OPENING LOVE LETTER ENVELOPE -->
+    <div id="envelopeOverlay" onclick="openEnvelope()">
+        <div class="envelope-wrapper" id="envelope">
+            <div class="flap"></div>
+            <div class="letter-preview">
+                <h3>For My Aarya ❤️</h3>
+                <p>A special birthday surprise...</p>
+            </div>
+            <div class="pocket"></div>
+            <div class="wax-seal">💌</div>
+        </div>
+        <p class="tap-hint">Tap the envelope to open your surprise ✨</p>
+    </div>
+
+    <!-- FLOATING ROMANTIC MUSIC PLAYER -->
+    <div class="music-player" id="musicPlayer" onclick="toggleMusic()">
+        <div class="music-icon" id="musicIcon">🎵</div>
+        <div class="music-info">
+            <span class="music-title">Our Song 💖</span>
+            <span class="music-status" id="musicStatus">Tap to play</span>
+        </div>
+    </div>
+
+    <!-- MAIN BIRTHDAY WEBSITE -->
+    <div class="container" id="mainContainer">
         <div id="birthdayContent">
             <h1>Happy Birthday, Aarya! 🎉</h1>
             <h2>To the love of my life, my absolute everything ❤️</h2>
@@ -240,40 +481,33 @@
     </div>
 
     <script>
-        // Floating Hearts Background Effect
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('heart-bg');
-            heart.innerHTML = '❤️';
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
-            heart.style.fontSize = (Math.random() * 18 + 10) + 'px';
-            document.body.appendChild(heart);
-            
-            setTimeout(() => { heart.remove(); }, 6000);
-        }
-        setInterval(createHeart, 350);
+        const bgMusic = document.getElementById('bgMusic');
+        const musicPlayer = document.getElementById('musicPlayer');
+        const musicStatus = document.getElementById('musicStatus');
+        const musicIcon = document.getElementById('musicIcon');
+        let isPlaying = false;
 
-        // Dodging No Button logic
-        function moveButton() {
-            const noBtn = document.getElementById('noBtn');
-            const container = document.getElementById('btnContainer');
-            
-            const maxX = container.clientWidth - noBtn.clientWidth;
-            const maxY = 60;
-            
-            const randomX = Math.floor(Math.random() * maxX);
-            const randomY = Math.floor(Math.random() * maxY) - 10;
-            
-            noBtn.style.left = randomX + 'px';
-            noBtn.style.top = randomY + 'px';
-        }
+        // Open Envelope & Auto-Start Music
+        function openEnvelope() {
+            const envelope = document.getElementById('envelope');
+            const overlay = document.getElementById('envelopeOverlay');
+            const mainContainer = document.getElementById('mainContainer');
 
-        // Yes Button click response
-        function sayYes() {
-            document.getElementById('yesBtn').style.display = 'none';
-            document.getElementById('noBtn').style.display = 'none';
-            document.getElementById('surpriseMessage').style.display = 'block';
-            
-            for(let i = 0; i < 35; i++) {
-                setTimeout
+            envelope.classList.add('open');
+
+            // Start playing background song on tap (bypasses browser autoplay blocks)
+            bgMusic.play().then(() => {
+                isPlaying = true;
+                musicPlayer.classList.add('playing');
+                musicStatus.innerText = 'Playing...';
+                musicIcon.innerText = '🎶';
+            }).catch(() => {
+                musicStatus.innerText = 'Tap to play';
+            });
+
+            // Reveal main birthday card smoothly
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                mainContainer.classList.add('visible');
+                for(let i = 0; i < 20; i++) {
+                    setTimeout(createHeart
